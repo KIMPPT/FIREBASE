@@ -38,12 +38,11 @@ export default function LoginForm() {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        if(errorCode=="auth/email-already-in-use"){
-            //alert를 이용하여 알려주거나, 태그를 이용해 알려줌
-            alert("동일한 이메일 입니다")
-        }
-        else if(errorCode=="auth/weak-password"){
-            alert("비밀번호가 너무 짧습니다")
+        if (errorCode == "auth/email-already-in-use") {
+          //alert를 이용하여 알려주거나, 태그를 이용해 알려줌
+          alert("동일한 이메일 입니다");
+        } else if (errorCode == "auth/weak-password") {
+          alert("비밀번호가 너무 짧습니다");
         }
         // ..
       });
@@ -66,11 +65,16 @@ export default function LoginForm() {
         //오류가 났을 때 실행할 코드
         /*오류가 나면 화면이 멈추는 것이 아니라 catch를 실행하고 다른 아래쪽의 코드를 실행 */
         console.log("에러입니다");
-        if(error.code=="auth/user-not-found"||error.code=="auth/wrong-password"){alert("없는 이메일이거나 비밀번호가 잘못되었습니다")}
+        if (
+          error.code == "auth/user-not-found" ||
+          error.code == "auth/wrong-password"
+        ) {
+          alert("없는 이메일이거나 비밀번호가 잘못되었습니다");
+        }
       }
-      
     }
-    getLogin()
+    //위에 만든 함수를 실행해줘야함. 위에 식만으로는 실행이 안됨
+    getLogin();
   };
   return (
     <div>
@@ -94,7 +98,9 @@ export default function LoginForm() {
         <br />
         <input type="submit" value="회원가입" />
       </form>
-      <button type="button" onClick={onClickLogin}>로그인</button>
+      <button type="button" onClick={onClickLogin}>
+        로그인
+      </button>
       <h3>{user ? user.email : "로그인되지않았습니다"}</h3>
     </div>
   );
