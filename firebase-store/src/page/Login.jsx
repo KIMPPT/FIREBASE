@@ -30,13 +30,13 @@ export default function Login() {
         );
         //scssion storage에 값 저장하기
         //그 값을 문자로 만들어서 저장
-        const userdata= {
+        const userdata = {
           name: user.displayName,
           email: user.email,
           uid: user.uid,
           photo: user.photoURL,
-        }
-        sessionStorage.setItem("user",JSON.stringify(userdata));
+        };
+        sessionStorage.setItem("user", JSON.stringify(userdata));
         navigate("/");
       })
       .catch((error) => {

@@ -40,19 +40,22 @@ export default function Home() {
   //새로고침 했을 때 session 값은 살아있다
   //단, 페이지가 완전히 꺼지면 값은 사라진다
   //각 데이터마다 살아있는 기간을 확인하여 사용
-  useEffect(()=>{
-    const UserData=sessionStorage.getItem('user')
-    if(UserData)
-    //문자열에서 객체로 바꿔서 사용
-    dispatch(userLogin(JSON.parse(UserData)))
-    console.log(user)
-  },[])
+  useEffect(() => {
+    const UserData = sessionStorage.getItem("user");
+    if (UserData)
+      //UseData값이 있을 때 저장 : 한번 로그인 했다
+      //문자열에서 객체로 바꿔서 사용
+      dispatch(userLogin(JSON.parse(UserData)));
+    console.log(user);
+  }, []);
 
   //로그아웃 함수
   const logout = () => {
     signOut(auth)
       .then(() => {
         dispatch(userLogout());
+        //전체 삭제
+        sessionStorage.clear();
         // Sign-out successful.
       })
       .catch((error) => {
