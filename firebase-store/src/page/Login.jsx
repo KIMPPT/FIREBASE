@@ -1,7 +1,48 @@
-import React from 'react'
-
+import React from "react";
+import { GoogleAuthProvider ,signInWithPopup} from "firebase/auth";
+import { auth } from "../database/firebase";
+import {useDispatch,useSelector} from 'react-redux'
+import { userLogin } from "../slice/userSlice";
+import { useNavigate } from "react-router-dom";
 export default function Login() {
+  const dispatch=useDispatch();
+  const navigate=useNavigate();
+  //생성자 : new를 이용하여 새로운 객체를 생성
+  const provider = new GoogleAuthProvider();
+
+  const onGoogleLogin = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+        dispatch(userLogin({
+          name:user.displayName,
+          email:user.email,
+          uid:user.uid,
+          photo:user.photoURL
+        }))
+        navigate('/')
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
   return (
-    <div>Login</div>
-  )
+    <div>
+      <h3>Login</h3>
+      <button onClick={onGoogleLogin}>구글로 로그인</button>
+    </div>
+  );
 }
