@@ -1,12 +1,12 @@
 import React from "react";
-import { GoogleAuthProvider ,signInWithPopup} from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../database/firebase";
-import {useDispatch,useSelector} from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "../slice/userSlice";
 import { useNavigate } from "react-router-dom";
 export default function Login() {
-  const dispatch=useDispatch();
-  const navigate=useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   //생성자 : new를 이용하여 새로운 객체를 생성
   const provider = new GoogleAuthProvider();
 
@@ -20,13 +20,24 @@ export default function Login() {
         const user = result.user;
         // IdP data available using getAdditionalUserInfo(result)
         // ...
-        dispatch(userLogin({
-          name:user.displayName,
-          email:user.email,
-          uid:user.uid,
-          photo:user.photoURL
-        }))
-        navigate('/')
+        dispatch(
+          userLogin({
+            name: user.displayName,
+            email: user.email,
+            uid: user.uid,
+            photo: user.photoURL,
+          })
+        );
+        //scssion storage에 값 저장하기
+        //그 값을 문자로 만들어서 저장
+        const userdata= {
+          name: user.displayName,
+          email: user.email,
+          uid: user.uid,
+          photo: user.photoURL,
+        }
+        sessionStorage.setItem("user",JSON.stringify(userdata));
+        navigate("/");
       })
       .catch((error) => {
         // Handle Errors here.
