@@ -12,7 +12,7 @@ export default function FireStoreTest() {
       querySnapshot.forEach((doc) => {
         //doc.id와 doc.data()값을 redux/state에 저장하여
         //웹에서 사용
-        console.log(`${doc.id} => ${doc.data()}`);
+        console.log(`${doc.id} => ${doc.data().admin}`);
       });
     }
     getData();
