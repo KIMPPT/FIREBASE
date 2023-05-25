@@ -6,6 +6,9 @@ import {
   doc,
   deleteDoc,
   updateDoc,
+  query,
+  where,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../database/firebase";
 export default function FireStoreTest() {
@@ -16,6 +19,22 @@ export default function FireStoreTest() {
   const [born, setBorn] = useState();
   //변경할 값을 state로 가져오기
   const [updateFirst, setUpdateFirst] = useState();
+  //검색할 last 값 state로 가져오기
+  const [searchLast, setSearchLsat] = useState();
+  //검색된 state
+  const [searchUser, setSearchUser] = useState();
+  //유저 uid값이 문서의 id값 일 때, 문서의 값을 찾아올 수 있는지 확인
+  useEffect(() => {
+    async function getUserData() {
+      //doc()를 통해서 값을 찾을 때, getDoc를 통해서 한개의 값을 들고옴
+      const querySnapshot = await getDoc(
+        doc(db, "userList", "H33piVeLqqYtuAeGaIkok2Krth93")
+      );
+      //바로 값을 들고오므로 forEach 사용하지 않음
+      console.log(querySnapshot.data());
+    }
+    getUserData();
+  }, []);
   //시작하자마자 값 가져오기
   useEffect(() => {
     //비동기함수로 작성하셔 값 가져옴
@@ -72,6 +91,30 @@ export default function FireStoreTest() {
     });
     getData();
   };
+  //단일 쿼리를 이용하여 값 찾기
+  const onsearch = async () => {
+    //where에서 하나를 이용한 단일 쿼리
+    //문자열에서 특정 문자열을 찾을 수 없다
+    //데이터를 세부적으로 사용 > 따로 서버를 만들어서 SQL 또는 noSQL을 사용
+    const q = query(
+      collection(db, "users"),
+      where("last", "==", searchLast),
+      where("born", ">", 1800)
+    );
+    //복합 쿼리문은 firebase 콘솔에서 색인(index)에서 설정해야 쓸 수 있다
+    //작성한 쿼리 객체를 getDocs를 이용하여 가져옴
+    const querySnapshot = await getDocs(q);
+    let dataArray = [];
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      dataArray.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+    setSearchUser(dataArray);
+  };
   return (
     <div>
       <h3>Firestore의 값을 추가, 가져옴 확인</h3>
@@ -84,13 +127,31 @@ export default function FireStoreTest() {
 
       <label htmlFor="">born</label>
       <input type="number" onChange={(e) => setBorn(e.target.value)} />
+      <br />
+      <hr />
+      <label>last검색</label>
+      <input type="text" onChange={(e) => setSearchLsat(e.target.value)} />
+      <button onClick={onsearch}>검색하기</button>
+      <hr />
+      {
+        //검색결과 출력
+        searchUser &&
+          searchUser.map((user) => (
+            <div>
+              <p>
+                {user.first},{user.last},{user.born}
+              </p>
+            </div>
+          ))
+      }
+      <hr />
       <button onClick={addDocData}>버튼을 누르면 firestore에 값 추가</button>
       <br />
       {users &&
         users.map((x) => (
           <div>
             <p>
-              {x.id},{x.first},{x.born}
+              {x.id},{x.first},{x.born},{x.last}
               <button onClick={() => deleteData(x.id)}>X</button>
               <input
                 type="text"
