@@ -1,0 +1,2 @@
+firestoretest안에 firestore를 이용해 추가/삭제/수정 확인
+firestore에 Redux를 사용하지는 않음
