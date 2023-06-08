@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { auth, db } from "../database/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useSelector, useDispatch } from "react-redux";
-import { checkUser, loginUser } from "../slice/userSlice";
+import { checkUser, loginUser, logoutUser } from "../slice/userSlice";
+import { Link } from "react-router-dom";
 export default function Main() {
   //화면에 보이기 위한 state 사용
   // const [uset,setUser]=useState();
@@ -33,6 +34,13 @@ export default function Main() {
     dispatch(loginUser(user))
   };
    */
+  //새로고침 할 때 마다 확인
+  /*
+  useEffect(()=>{
+    const user=JSON.parse(sessionStorage.getItem('user'))
+    if(user){dispatch(loginUser(user))}
+  },[])
+   */
   //구글 로그인 함수
   const onGoogleLogin = () => {
     const provider = new GoogleAuthProvider();
@@ -50,7 +58,6 @@ export default function Main() {
         // 유저를 확인하기 위한 함수
         //checkUser({ uid: user.uid, email: user.email });
         dispatch(checkUser({ uid: user.uid, email: user.email }));
-        console.log(user)
       })
       .catch((error) => {
         // Handle Errors here.
@@ -63,11 +70,32 @@ export default function Main() {
         // ...
       });
   };
+  //로그아웃 버튼-구글
+  const onGoogleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        //redux에 있는 정보도 삭제
+        dispatch(logoutUser())
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
   return (
     <div>
       <h3>Main</h3>
-      <button onClick={onGoogleLogin}>구글로 로그인</button>
+      {/*삼항연산자를 이용해 로그인하면 로그아웃, 로그인 하지 않은 상태면 로그인 버튼만 나오게 */}
+      {
+        user.uid? <div>
       <h2>{user && user.email}님 환영합니다</h2>
+      <button onClick={onGoogleLogout}>로그아웃</button>
+        </div>
+        :
+        <div>
+          <button onClick={onGoogleLogin}>구글로 로그인</button>
+        </div>
+      }
+      <Link to="/board">게시물 보러가기</Link>
     </div>
   );
 }
