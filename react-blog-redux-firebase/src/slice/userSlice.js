@@ -21,7 +21,9 @@ export const userSlice = createSlice({
             state=action.payload;
             state자체에 바로 값을 넣을 수 없다. 넣고자 한다면 return으로 전달해야한다
             */
-
+           console.log(action)
+      console.log(action.payload)
+      console.log(JSON.stringify(action.payload))
       //로그인 했을 때 세션에 값 저장
       //user라는 키에 redux에 들어갈 모든 내용 저장
       sessionStorage.setItem("user", JSON.stringify(action.payload));
